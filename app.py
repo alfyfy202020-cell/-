@@ -1,33 +1,41 @@
 import streamlit as st
 from google import genai
+import os
 
 # ضبط إعدادات الصفحة
 st.set_page_config(
     page_title="فاحص قصص سيرفر ريسبكت | Respect RP", 
-    page_icon="👑", 
+    page_icon="🔮", 
     layout="wide"
 )
 
-# --- تنسيق وتصميم الواجهة وشعارات Respect RP ---
+# --- تنسيق وتصميم الواجهة وشعار Respect RP ---
 st.markdown("""
 <style>
-    /* خلفية التطبيق العامة مع شعار مائي خفيف */
     .stApp {
         background-color: #0d0914;
-        background-image: radial-gradient(circle at 50% 10%, rgba(109, 40, 217, 0.15) 0%, transparent 60%);
+        background-image: radial-gradient(circle at 50% 10%, rgba(109, 40, 217, 0.2) 0%, transparent 60%);
         color: #f3f0ff;
     }
     
-    /* تصميم الهيدر وشعار ريسبكت */
+    .logo-container {
+        text-align: center;
+        margin-bottom: 15px;
+    }
+    
+    .logo-container img {
+        max-width: 130px;
+        filter: drop-shadow(0 0 15px rgba(168, 85, 247, 0.6));
+    }
+    
     .main-title {
         background: linear-gradient(135deg, #4c1d95 0%, #2e1065 100%);
-        padding: 30px;
+        padding: 25px;
         border-radius: 20px;
         text-align: center;
         box-shadow: 0 10px 30px -5px rgba(124, 58, 237, 0.4);
-        margin-bottom: 30px;
+        margin-bottom: 25px;
         border: 2px solid #7c3aed;
-        position: relative;
     }
     
     .brand-badge {
@@ -47,24 +55,21 @@ st.markdown("""
         color: #ffffff !important;
         font-weight: 900;
         margin: 5px 0;
-        font-size: 2.5rem;
-        text-shadow: 0 2px 8px rgba(0,0,0,0.7);
+        font-size: 2.3rem;
     }
     
     .main-title p {
         color: #ddd6fe !important;
-        margin-top: 8px;
-        font-size: 1.1rem;
+        margin-top: 5px;
+        font-size: 1rem;
     }
 
-    /* عناوين ومسميات الحقول */
     label {
         color: #a78bfa !important;
         font-weight: 700 !important;
         font-size: 1.1rem !important;
     }
 
-    /* مربع إدخال النص */
     .stTextArea textarea {
         background-color: #140d21 !important;
         color: #ffffff !important;
@@ -78,7 +83,6 @@ st.markdown("""
         box-shadow: 0 0 15px rgba(192, 132, 252, 0.4) !important;
     }
 
-    /* زر الفحص */
     .stButton>button {
         width: 100%;
         background: linear-gradient(90deg, #7c3aed 0%, #5b21b6 100%) !important;
@@ -97,24 +101,22 @@ st.markdown("""
         background: linear-gradient(90deg, #9333ea 0%, #7c3aed 100%) !important;
     }
 
-    /* شاشة تسجيل الدخول */
     .login-box {
         background-color: #140d21;
-        padding: 40px;
+        padding: 35px;
         border-radius: 20px;
         border: 2px solid #7c3aed;
-        max-width: 450px;
-        margin: 50px auto;
+        max-width: 420px;
+        margin: 40px auto;
         text-align: center;
         box-shadow: 0 20px 40px rgba(0, 0, 0, 0.9);
     }
 
-    /* الملاحظات والشعار السفلي */
     .footer-brand {
         text-align: center;
-        margin-top: 40px;
+        margin-top: 35px;
         color: #6b7280;
-        font-size: 0.9rem;
+        font-size: 0.85rem;
         font-weight: 600;
     }
 </style>
@@ -127,12 +129,13 @@ if "authenticated" not in st.session_state:
     st.session_state["authenticated"] = False
 
 if not st.session_state["authenticated"]:
+    st.markdown('<div class="login-box">', unsafe_allow_html=True)
+    if os.path.exists("logo.png"):
+        st.image("logo.png", width=120)
     st.markdown("""
-    <div class="login-box">
         <div class="brand-badge">RESPECT ROLEPLAY</div>
-        <h2 style="color: #fff; margin-bottom: 10px;">👑 بوابة الإدارة</h2>
-        <p style="color: #a78bfa; margin-bottom: 25px;">نظام الفحص الذكي والتقييم المتقدم للقصص</p>
-    </div>
+        <h2 style="color: #fff; margin-bottom: 5px;">بوابة الإدارة</h2>
+        <p style="color: #a78bfa; margin-bottom: 20px;">نظام الفحص والتدقيق الذكي للقصص</p>
     """, unsafe_allow_html=True)
     
     input_pwd = st.text_input("🔑 أدخل كلمة المرور:", type="password")
@@ -142,34 +145,41 @@ if not st.session_state["authenticated"]:
             st.rerun()
         else:
             st.error("كلمة المرور غير صحيحة!")
+    st.markdown('</div>', unsafe_allow_html=True)
     st.stop()
 
 # --- جلب API Key تلقائياً من Secrets ---
 api_key = st.secrets.get("GEMINI_API_KEY", "")
 
-# --- الهيدر وشعارات ريسبكت ---
+# --- عرض الشعار والعنوان ---
+if os.path.exists("logo.png"):
+    col1, col2, col3 = st.columns([1, 2, 1])
+    with col2:
+        st.markdown('<div class="logo-container">', unsafe_allow_html=True)
+        st.image("logo.png", width=130)
+        st.markdown('</div>', unsafe_allow_html=True)
+
 st.markdown("""
 <div class="main-title">
-    <div class="brand-badge">👑 RESPECT RP OFFICIAL TOOL</div>
-    <h1>✨ نظام فحص وتقييم القصص</h1>
-    <p>تدقيق احترافي للشروط، كشف دقيق للذكاء الاصطناعي، وتقييم إمكانية تطبيق الرول بلاي</p>
+    <div class="brand-badge">RESPECT RP OFFICIAL TOOL</div>
+    <h1>نظام فحص وتدقيق القصص</h1>
+    <p>فحص الكتابة البشرية، مطابقة الشروط، وتقييم سيناريو الرول بلاي</p>
 </div>
 """, unsafe_allow_html=True)
 
 # --- منطقة إدخال النص ---
-story = st.text_area("📝 ألصق القصة المراد فحصها هنا:", height=260, placeholder="ضع نص القصة هنا للتحليل والشروط...")
+story = st.text_area("📝 ألصق القصة المراد فحصها هنا:", height=250, placeholder="ضع نص القصة هنا للتحليل...")
 
-# Prompt محسن بالكامل لزيادة دقة الـ AI وفحص صلاحية الرول بلاي
-system_prompt = """أنت المدقق الرسمي المخصص لقصص سيرفر "ريسبكت RP" (Respect Roleplay). قم بتحليل القصة بدقة عالية جداً وتقديم النتيجة بالشكل المباشر والمختصر الموضح أسفله:
+system_prompt = """أنت المدقق الرسمي المخصص لقصص سيرفر "ريسبكت RP" (Respect Roleplay). قم بتحليل القصة بدقة عالية جداً وتقديم التقرير بالتنسيق المحدد أسفله:
 
-1. 🔍 **كشف الذكاء الاصطناعي (AI Detector - دقة عالية):**
-   - حلل القصة بعناية (افحص التناغم اللغوي، التكرار السطحي، الهيكلة التوليدية المعتادة، والمفردات الرسمية الفائقة).
-   - الاحتمالية: (منخفض جداً "بشري" / متوسط / عالي جداً "مكتوبة بـ AI").
-   - السبب: (سطر واحد فقط بذكر الأدلة مثل: مفردات توليدية، أسلوب بشري عاطفي، أو تراكيب جاهزة).
+1. 🔍 **فحص أسلوب الكتابة (ذكاء اصطناعي أم بشري؟):**
+   - افحص الأسلوب بعناية فائقة (الكتابة البشرية تتميز بالأسلوب السردي المباشر، وجود أخطاء إملائية/لغوية خفيفة، والتطرق لتفاصيل عامية أو بسيطة. بينما الذكاء الاصطناعي يميل للمصطلحات الرسمية المعقدة والترتيب التوليدي المتناسق بزيادة).
+   - التقييم: (كتابة بشرية طبيعية / مكتوبة بالذكاء الاصطناعي).
+   - السبب: (في سطر واحد فقط).
 
 2. 🎮 **ملائمة الرول بلاي (Roleplay Viability):**
-   - هل سيناريو القصة وأحداث الشخصية قابلة للتطبيق والتمثيل الفعلي داخل الجيم بلاي بالسيرفر بدون الاعتماد على اللوقات (Logs) أو أحداث وهمية لا تدعمها المودات؟
-   - النتيجة: (مقبول رول بلاي / غير قابل للتمثيل - يعتمد على اللوقات أو سيناريو غير واقعي).
+   - هل الأحداث قابلة للتمثيل والتطبيق الفعلي داخل الجيم بلاي بدون الاعتماد على اللوقات (Logs) أو أشياء غير واقعية برمجياً؟
+   - النتيجة: (مقبولة للرول بلاي / غير قابلة للتمثيل).
 
 3. 📌 **النتيجة النهائية:**
    - (مقبولة) أو (مرفوضة).
@@ -181,17 +191,17 @@ system_prompt = """أنت المدقق الرسمي المخصص لقصص سير
    - [مستوفى / غير مستوفى] : (الاهتمامات، الطموحات، السلبيات والإيجابيات)
    - [مستوفى / غير مستوفى] : (خلو القصة من أحداث داخل السيرفر)
 
-5. 🎙️ **ملخص الرفض والملاحظات الصوتية (مختصر جداً):**
-   - اكتب أسباب الرفض بأسلوب نقاط مختصر ومباشر جداً ليتم قراءتها للشخص صوتياً في الروم (بدون مقدمات).
+5. 🎙️ **كلام مختصر للرفض (لقراءته للشخص صوتاً فوراً):**
+   - اكتب جملتين فقط مختصرة ومباشرة يمكن قراءتها للشخص في روم الصوت لتوضيح سبب رفض القصة وما يحتاج تعديله بدون إطالة.
 """
 
-if st.button("👑 فحص القصة والتقييم"):
+if st.button("🔮 فحص القصة والتقييم"):
     if not api_key:
         st.error("لم يتم العثور على مفتاح API في Secrets. يرجى إضافته من إعدادات التطبيق.")
     elif not story.strip():
         st.warning("الرجاء كتابة أو نسخ القصة أولاً.")
     else:
-        with st.spinner("👑 جاري تدقيق الشروط وفحص الذكاء الاصطناعي والرول بلاي..."):
+        with st.spinner("جاري تدقيق الشروط وفحص أسلوب الكتابة والرول بلاي..."):
             try:
                 client = genai.Client(api_key=api_key)
                 response = client.models.generate_content(
@@ -205,9 +215,8 @@ if st.button("👑 فحص القصة والتقييم"):
             except Exception as e:
                 st.error(f"حدث خطأ أثناء الفحص: {e}")
 
-# الفوتر السفلي
 st.markdown("""
 <div class="footer-brand">
-    👑 Respect RP - Administration Management System
+    Respect RP - Administration Management System
 </div>
 """, unsafe_allow_html=True)
