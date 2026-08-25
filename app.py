@@ -128,7 +128,7 @@ st.markdown("""
 """, unsafe_allow_html=True)
 
 # --- نظام كلمة المرور للحماية ---
-PASSWORD_SECRET = "Respect112833"
+PASSWORD_SECRET = "Respect1122833"
 
 if "authenticated" not in st.session_state:
     st.session_state["authenticated"] = False
