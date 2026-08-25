@@ -217,20 +217,24 @@ if st.button("🔮 فحص القصة والتقييم"):
                 client = genai.Client(api_key=api_key)
                 combined_content = f"{system_prompt}\n\n--- نص القصة ---\n{story}\n\n--- إيجابيات وسلبيات الشخصية ---\n{pros_cons if pros_cons.strip() else 'لم يتم كتابة إيجابيات وسلبيات'}"
                 
-                # استخدام النموذج الرسمي gemini-2.5-flash
-                response = client.models.generate_content(
-                    model="gemini-2.5-flash",
-                    contents=combined_content,
-                )
+                # استخدام نموذج gemini-2.5-flash كنموذج رئيسي
+                try:
+                    response = client.models.generate_content(
+                        model="gemini-2.5-flash",
+                        contents=combined_content,
+                    )
+                except Exception:
+                    # الاحتياطي في حال طلب النظام الاصدار المحدث
+                    response = client.models.generate_content(
+                        model="gemini-2.5-flash-latest",
+                        contents=combined_content,
+                    )
 
                 st.markdown("---")
                 st.markdown("### 📊 تقرير إدارة Respect RP:")
                 st.info(response.text)
             except Exception as e:
-                if "429" in str(e) or "RESOURCE_EXHAUSTED" in str(e):
-                    st.error("⚠️ تم تجاوز عدد الطلبات المجانية المسموح بها مؤقتاً (Quota Limit). يرجى الانتظار لدقيقة واحدة ثم المحاولة مجدداً.")
-                else:
-                    st.error(f"حدث خطأ أثناء الفحص: {e}")
+                st.error(f"حدث خطأ أثناء الفحص: {e}")
 
 st.markdown("""
 <div class="footer-brand">
