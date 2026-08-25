@@ -217,17 +217,11 @@ if st.button("🔮 فحص القصة والتقييم"):
                 client = genai.Client(api_key=api_key)
                 combined_content = f"{system_prompt}\n\n--- نص القصة ---\n{story}\n\n--- إيجابيات وسلبيات الشخصية ---\n{pros_cons if pros_cons.strip() else 'لم يتم كتابة إيجابيات وسلبيات'}"
                 
-                # تجربة النموذج الأساسي ثم الاحتياطي عند الحاجة
-                try:
-                    response = client.models.generate_content(
-                        model="gemini-2.5-flash",
-                        contents=combined_content,
-                    )
-                except Exception:
-                    response = client.models.generate_content(
-                        model="gemini-1.5-flash",
-                        contents=combined_content,
-                    )
+                # الاستدلال باستخدام اسم النموذج المعتمد
+                response = client.models.generate_content(
+                    model="gemini-2.5-flash",
+                    contents=combined_content,
+                )
 
                 st.markdown("---")
                 st.markdown("### 📊 تقرير إدارة Respect RP:")
