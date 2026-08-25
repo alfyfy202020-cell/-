@@ -8,79 +8,97 @@ st.set_page_config(
     layout="wide"
 )
 
-# --- تنسيق وتصميم الواجهة (Custom CSS) ---
+# --- تنسيق وتصميم الواجهة (Purple Dark Theme) ---
 st.markdown("""
 <style>
     /* خلفية التطبيق العامة */
     .stApp {
-        background-color: #0f172a;
-        color: #f8fafc;
+        background-color: #0d0914;
+        color: #f3f0ff;
     }
     
     /* تصميم الهيدر / العنوان */
     .main-title {
-        background: linear-gradient(135deg, #3b82f6 0%, #1d4ed8 100%);
-        padding: 24px;
-        border-radius: 16px;
+        background: linear-gradient(135deg, #6d28d9 0%, #4c1d95 100%);
+        padding: 28px;
+        border-radius: 18px;
         text-align: center;
-        box-shadow: 0 10px 25px -5px rgba(59, 130, 246, 0.3);
+        box-shadow: 0 10px 30px -5px rgba(109, 40, 217, 0.5);
         margin-bottom: 25px;
-        border: 1px solid rgba(255, 255, 255, 0.1);
+        border: 1px solid rgba(167, 139, 250, 0.3);
     }
     
     .main-title h1 {
         color: #ffffff !important;
         font-weight: 800;
         margin: 0;
-        font-size: 2.2rem;
+        font-size: 2.3rem;
+        text-shadow: 0 2px 4px rgba(0,0,0,0.5);
     }
     
     .main-title p {
-        color: #93c5fd !important;
-        margin-top: 8px;
-        font-size: 1rem;
+        color: #ddd6fe !important;
+        margin-top: 10px;
+        font-size: 1.1rem;
+    }
+
+    /* عناوين ومسميات الحقول */
+    label {
+        color: #c4b5fd !important;
+        font-weight: 600 !important;
+        font-size: 1.1rem !important;
     }
 
     /* مربع إدخال النص */
     .stTextArea textarea {
-        background-color: #1e293b !important;
-        color: #f8fafc !important;
-        border: 1px solid #334155 !important;
+        background-color: #181024 !important;
+        color: #ffffff !important;
+        border: 1.5px solid #5b21b6 !important;
         border-radius: 12px !important;
-        font-size: 1rem !important;
+        font-size: 1.05rem !important;
+        line-height: 1.6 !important;
     }
     .stTextArea textarea:focus {
-        border-color: #3b82f6 !important;
-        box-shadow: 0 0 0 2px rgba(59, 130, 246, 0.4) !important;
+        border-color: #a855f7 !important;
+        box-shadow: 0 0 12px rgba(168, 85, 247, 0.4) !important;
     }
 
     /* زر الفحص */
     .stButton>button {
         width: 100%;
-        background: linear-gradient(90deg, #2563eb 0%, #1d4ed8 100%) !important;
+        background: linear-gradient(90deg, #7c3aed 0%, #6d28d9 100%) !important;
         color: #ffffff !important;
         font-weight: 700 !important;
-        font-size: 1.1rem !important;
-        padding: 12px 24px !important;
-        border-radius: 10px !important;
-        border: none !important;
+        font-size: 1.2rem !important;
+        padding: 14px 24px !important;
+        border-radius: 12px !important;
+        border: 1px solid #a78bfa !important;
         transition: all 0.3s ease !important;
-        box-shadow: 0 4px 14px 0 rgba(37, 99, 235, 0.39) !important;
+        box-shadow: 0 4px 20px 0 rgba(124, 58, 237, 0.4) !important;
     }
     .stButton>button:hover {
         transform: translateY(-2px);
-        box-shadow: 0 6px 20px 0 rgba(37, 99, 235, 0.5) !important;
+        box-shadow: 0 6px 25px 0 rgba(168, 85, 247, 0.6) !important;
+        background: linear-gradient(90deg, #8b5cf6 0%, #7c3aed 100%) !important;
     }
 
     /* شاشة تسجيل الدخول */
     .login-box {
-        background-color: #1e293b;
+        background-color: #181024;
         padding: 40px;
-        border-radius: 16px;
-        border: 1px solid #334155;
+        border-radius: 18px;
+        border: 1px solid #5b21b6;
         max-width: 450px;
         margin: 50px auto;
-        box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.5);
+        box-shadow: 0 20px 30px -5px rgba(0, 0, 0, 0.8);
+    }
+
+    /* تنسيق مربع النتيجة والرسائل */
+    .stAlert {
+        background-color: #1e1333 !important;
+        border: 1px solid #7c3aed !important;
+        color: #f3f0ff !important;
+        border-radius: 12px !important;
     }
 </style>
 """, unsafe_allow_html=True)
@@ -108,18 +126,18 @@ if not st.session_state["authenticated"]:
 # --- جلب API Key تلقائياً من Secrets ---
 api_key = st.secrets.get("GEMINI_API_KEY", "")
 
-# --- الهيدر والعنوان الرئيسية ---
+# --- الهيدر والعنوان الرئيسي ---
 st.markdown("""
 <div class="main-title">
-    <h1>🛡️ نظام فحص وتدقيق القصص (Respect RP)</h1>
-    <p>أداة ذكية مخصصة لتقييم القصص بناءً على شروط وقوانين سيرفر ريسبكت وفحص الذكاء الاصطناعي</p>
+    <h1>👾 نظام فحص وتقييم القصص (Respect RP)</h1>
+    <p>أداة ذكية مخصصة لتقييم قصص السيرفر وتدقيق الشروط وفحص الذكاء الاصطناعي</p>
 </div>
 """, unsafe_allow_html=True)
 
 # --- منطقة إدخال النص ---
-story = st.text_area("✍️ ألصق القصة المراد فحصها هنا:", height=250, placeholder="ضع نص القصة هنا...")
+story = st.text_area("📝 ألصق القصة المراد فحصها هنا:", height=250, placeholder="ضع نص القصة هنا...")
 
-system_prompt = """قم بمراجعة القصة وتوفير التقييم بالتنسيق التالي. أنت مدقق مخصص لقصص سيرفر "ريسبكت (Respect RP)" ومستكشف للنصوص التوليدية (AI Detector):
+system_prompt = """قم بمراجعة القصة وتوفير التقييم بالتنسيق المحدد أسفله. أنت مدقق مخصص لقصص سيرفر "ريسبكت (Respect RP)" ومستكشف للنصوص التوليدية (AI Detector):
 
 1. **كشف الذكاء الاصطناعي (AI Detection):**
    - حدد نسبة احتمال أن تكون القصة مكتوبة بواسطة الذكاء الاصطناعي (منخفض جداً، متوسط، عالي جداً).
@@ -138,9 +156,12 @@ system_prompt = """قم بمراجعة القصة وتوفير التقييم ب
 
 4. **أسباب الرفض والملاحظات (إن وجدت):**
    - وضح النقاط المفقودة والتوجيهات للتعديل بأسلوب مباشر ومختصر.
+
+5. **رسالة الرفض الموجهة للشخص (رسالة إدارية مرتبة وجاهزة للنسخ):**
+   - قم بكتابة رسالة ديسكورد محترمة ومرتبة بالنيابة عن إدارة "ريسبكت RP" موجهة للشخص صاحب القصة، تشرح له الرفض بلباقة وتوضح له الأسباب بالتفصيل مع توجيهه لكيفية التعديل ليتمكن من إعادة التقديم. (إذا كانت القصة مقبولة، اكتب رسالة قبول وترحيب به في السيرفر).
 """
 
-if st.button("🚀 فحص القصة الآن"):
+if st.button("🔮 فحص القصة الآن"):
     if not api_key:
         st.error("لم يتم العثور على مفتاح API في Secrets. يرجى إضافته من إعدادات التطبيق.")
     elif not story.strip():
@@ -149,11 +170,12 @@ if st.button("🚀 فحص القصة الآن"):
         with st.spinner("جاري تحليل القصة وفحص الشروط..."):
             try:
                 genai.configure(api_key=api_key)
-                model = genai.GenerativeModel("gemini-3.6-flash")
+                # استخدام النموذج الجاهز والمستقر
+                model = genai.GenerativeModel("gemini-1.5-flash")
                 response = model.generate_content(f"{system_prompt}\n\nالقصة المراد فحصها:\n{story}")
 
                 st.markdown("---")
-                st.subheader("📋 نتيجة الفحص والتقرير:")
+                st.subheader("📊 نتيجة الفحص والتقرير الإداري:")
                 st.info(response.text)
             except Exception as e:
                 st.error(f"حدث خطأ أثناء الفحص: {e}")
