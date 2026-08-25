@@ -213,21 +213,37 @@ if st.button("🔮 فحص القصة والتقييم"):
         st.warning("الرجاء كتابة أو نسخ القصة في الخانة الأولى أولاً.")
     else:
         with st.spinner("جاري تدقيق القصة والإيجابيات والسلبيات..."):
-            try:
-                client = genai.Client(api_key=api_key)
-                combined_content = f"{system_prompt}\n\n--- نص القصة ---\n{story}\n\n--- إيجابيات وسلبيات الشخصية ---\n{pros_cons if pros_cons.strip() else 'لم يتم كتابة إيجابيات وسلبيات'}"
-                
-                # الاستدلال باستخدام اسم النموذج المعتمد
-                response = client.models.generate_content(
-                    model="gemini-2.5-flash",
-                    contents=combined_content,
-                )
-
+            client = genai.Client(api_key=api_key)
+            combined_content = f"{system_prompt}\n\n--- نص القصة ---\n{story}\n\n--- إيجابيات وسلبيات الشخصية ---\n{pros_cons if pros_cons.strip() else 'لم يتم كتابة إيجابيات وسلبيات'}"
+            
+            # قائمة بالنماذج المتاحة للتجربة التلقائية
+            models_to_try = [
+                "gemini-2.5-flash",
+                "gemini-2.5-pro",
+                "gemini-flash-experimental"
+            ]
+            
+            response = None
+            last_error = None
+            
+            for m in models_to_try:
+                try:
+                    response = client.models.generate_content(
+                        model=m,
+                        contents=combined_content,
+                    )
+                    if response:
+                        break
+                except Exception as e:
+                    last_error = e
+                    continue
+            
+            if response:
                 st.markdown("---")
                 st.markdown("### 📊 تقرير إدارة Respect RP:")
                 st.info(response.text)
-            except Exception as e:
-                st.error(f"حدث خطأ أثناء الفحص: {e}")
+            else:
+                st.error(f"تعذر الاتصال بالنماذج: {last_error}")
 
 st.markdown("""
 <div class="footer-brand">
