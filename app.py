@@ -1,5 +1,5 @@
 import streamlit as st
-from google import genai
+import google.generativeai as genai
 
 # ضبط إعدادات الصفحة
 st.set_page_config(
@@ -169,12 +169,10 @@ if st.button("🔮 فحص القصة الآن"):
     else:
         with st.spinner("جاري تحليل القصة وفحص الشروط..."):
             try:
-                # التهيئة الجديدة للمكتبة
-                client = genai.Client(api_key=api_key)
-                response = client.models.generate_content(
-                    model='gemini-2.5-flash',
-                    contents=f"{system_prompt}\n\nالقصة المراد فحصها:\n{story}",
-                )
+                genai.configure(api_key=api_key)
+                # التجربة بـ gemini-1.5-flash-latest لمنع أخطاء التسمية
+                model = genai.GenerativeModel("gemini-1.5-flash-latest")
+                response = model.generate_content(f"{system_prompt}\n\nالقصة المراد فحصها:\n{story}")
 
                 st.markdown("---")
                 st.subheader("📊 نتيجة الفحص والتقرير الإداري:")
