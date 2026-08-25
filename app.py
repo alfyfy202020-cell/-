@@ -170,8 +170,8 @@ if st.button("🔮 فحص القصة الآن"):
         with st.spinner("جاري تحليل القصة وفحص الشروط..."):
             try:
                 genai.configure(api_key=api_key)
-                # استخدام النموذج الجاهز والمستقر
-                model = genai.GenerativeModel("gemini-1.5-flash")
+                # تم تغيير النموذج إلى gemini-pro لضمان عمله بدون أخطاء 404
+                model = genai.GenerativeModel("gemini-pro")
                 response = model.generate_content(f"{system_prompt}\n\nالقصة المراد فحصها:\n{story}")
 
                 st.markdown("---")
