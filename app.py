@@ -1,5 +1,5 @@
 import streamlit as st
-import google.generativeai as genai
+from google import genai
 
 # ضبط إعدادات الصفحة
 st.set_page_config(
@@ -169,24 +169,12 @@ if st.button("🔮 فحص القصة الآن"):
     else:
         with st.spinner("جاري تحليل القصة وفحص الشروط..."):
             try:
-                genai.configure(api_key=api_key)
-                
-                # التعرف التلقائي على أحدث نموذج متاح للحساب لتفادي خطأ 404
-                selected_model = "gemini-1.5-flash"
-                try:
-                    available_models = [
-                        m.name.replace("models/", "") 
-                        for m in genai.list_models() 
-                        if 'generateContent' in m.supported_generation_methods
-                    ]
-                    if available_models:
-                        # أخذ أول نموذج يدعم إنشاء النصوص
-                        selected_model = available_models[0]
-                except Exception:
-                    pass
-
-                model = genai.GenerativeModel(selected_model)
-                response = model.generate_content(f"{system_prompt}\n\nالقصة المراد فحصها:\n{story}")
+                # استخدام SDK الجديد مع النموذج الموصى به رسمياً
+                client = genai.Client(api_key=api_key)
+                response = client.models.generate_content(
+                    model="gemini-2.5-flash",
+                    contents=f"{system_prompt}\n\nالقصة المراد فحصها:\n{story}",
+                )
 
                 st.markdown("---")
                 st.subheader("📊 نتيجة الفحص والتقرير الإداري:")
