@@ -169,10 +169,10 @@ if st.button("🔮 فحص القصة الآن"):
     else:
         with st.spinner("جاري تحليل القصة وفحص الشروط..."):
             try:
-                # استخدام SDK الجديد مع النموذج الموصى به رسمياً
+                # استخدام SDK الجديد مع النموذج المطلوب حديثاً من جوجل
                 client = genai.Client(api_key=api_key)
                 response = client.models.generate_content(
-                    model="gemini-2.5-flash",
+                    model="gemini-3.6-flash",
                     contents=f"{system_prompt}\n\nالقصة المراد فحصها:\n{story}",
                 )
 
