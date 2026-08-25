@@ -3,14 +3,6 @@ import google.generativeai as genai
 
 st.set_page_config(page_title="فاحص قصص سيرفر ريسبكت", page_icon="🛡️", layout="wide")
 
-# --- رابط الشعار ---
-LOGO_URL = "https://i.imgur.com/v8tT7s8.png"
-
-try:
-    st.sidebar.image(LOGO_URL, use_container_width=True)
-except Exception:
-    pass
-
 # --- نظام كلمة المرور للحماية ---
 PASSWORD_SECRET = "Respect112833"
 
@@ -28,19 +20,12 @@ if not st.session_state["authenticated"]:
             st.error("كلمة المرور غير صحيحة!")
     st.stop()
 
-# --- جلب المفتاح تلقائياً من الـ Secrets ---
+# --- جلب API Key تلقائياً من Secrets ---
 api_key = st.secrets.get("GEMINI_API_KEY", "")
 
 # --- واجهة التطبيق الرئيسية ---
-col1, col2 = st.columns([1, 4])
-with col1:
-    try:
-        st.image(LOGO_URL, width=100)
-    except Exception:
-        pass
-with col2:
-    st.title("🛡️ نظام فحص وتقييم القصص (Respect RP)")
-    st.write("أدخل القصة الأساسية من المتطلبات المعتمدة لقصص ريسبكت وفحص الذكاء الاصطناعي.")
+st.title("🛡️ نظام فحص وتقييم القصص (Respect RP)")
+st.write("أدخل القصة الأساسية من المتطلبات المعتمدة لقصص ريسبكت وفحص الذكاء الاصطناعي.")
 
 story = st.text_area("أدخل القصة المراد فحصها هنا:", height=250)
 
@@ -73,7 +58,7 @@ if st.button("فحص القصة الآن"):
     else:
         try:
             genai.configure(api_key=api_key)
-            model = genai.GenerativeModel("gemini-2.5-flash")
+            model = genai.GenerativeModel("gemini-3.6-flash")
             response = model.generate_content(f"{system_prompt}\n\nالقصة المراد فحصها:\n{story}")
 
             st.markdown("---")
