@@ -171,18 +171,21 @@ if st.button("🔮 فحص القصة الآن"):
             try:
                 genai.configure(api_key=api_key)
                 
-                # جلب النموذج المناسب والمدعوم تلقائياً لمنع خطأ 404
-                model_name = "gemini-3.6-flash"
+                # التعرف التلقائي على أحدث نموذج متاح للحساب لتفادي خطأ 404
+                selected_model = "gemini-1.5-flash"
                 try:
-                    models = [m.name for m in genai.list_models() if 'generateContent' in m.supported_generation_methods]
-                    if models:
-                        # اختيار أول نموذج فلاش متوفر أو أول نموذج بالقائمة
-                        flash_models = [m for m in models if 'flash' in m]
-                        model_name = flash_models[0] if flash_models else models[0]
+                    available_models = [
+                        m.name.replace("models/", "") 
+                        for m in genai.list_models() 
+                        if 'generateContent' in m.supported_generation_methods
+                    ]
+                    if available_models:
+                        # أخذ أول نموذج يدعم إنشاء النصوص
+                        selected_model = available_models[0]
                 except Exception:
                     pass
 
-                model = genai.GenerativeModel(model_name)
+                model = genai.GenerativeModel(selected_model)
                 response = model.generate_content(f"{system_prompt}\n\nالقصة المراد فحصها:\n{story}")
 
                 st.markdown("---")
