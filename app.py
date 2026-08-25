@@ -4,101 +4,118 @@ from google import genai
 # ضبط إعدادات الصفحة
 st.set_page_config(
     page_title="فاحص قصص سيرفر ريسبكت | Respect RP", 
-    page_icon="🛡️", 
+    page_icon="👑", 
     layout="wide"
 )
 
-# --- تنسيق وتصميم الواجهة (Purple Dark Theme) ---
+# --- تنسيق وتصميم الواجهة وشعارات Respect RP ---
 st.markdown("""
 <style>
-    /* خلفية التطبيق العامة */
+    /* خلفية التطبيق العامة مع شعار مائي خفيف */
     .stApp {
         background-color: #0d0914;
+        background-image: radial-gradient(circle at 50% 10%, rgba(109, 40, 217, 0.15) 0%, transparent 60%);
         color: #f3f0ff;
     }
     
-    /* تصميم الهيدر / العنوان */
+    /* تصميم الهيدر وشعار ريسبكت */
     .main-title {
-        background: linear-gradient(135deg, #6d28d9 0%, #4c1d95 100%);
-        padding: 28px;
-        border-radius: 18px;
+        background: linear-gradient(135deg, #4c1d95 0%, #2e1065 100%);
+        padding: 30px;
+        border-radius: 20px;
         text-align: center;
-        box-shadow: 0 10px 30px -5px rgba(109, 40, 217, 0.5);
-        margin-bottom: 25px;
-        border: 1px solid rgba(167, 139, 250, 0.3);
+        box-shadow: 0 10px 30px -5px rgba(124, 58, 237, 0.4);
+        margin-bottom: 30px;
+        border: 2px solid #7c3aed;
+        position: relative;
     }
     
+    .brand-badge {
+        background: #7c3aed;
+        color: #fff;
+        padding: 6px 16px;
+        border-radius: 20px;
+        font-size: 0.85rem;
+        font-weight: 800;
+        letter-spacing: 2px;
+        display: inline-block;
+        margin-bottom: 10px;
+        box-shadow: 0 0 10px rgba(168, 85, 247, 0.6);
+    }
+
     .main-title h1 {
         color: #ffffff !important;
-        font-weight: 800;
-        margin: 0;
-        font-size: 2.3rem;
-        text-shadow: 0 2px 4px rgba(0,0,0,0.5);
+        font-weight: 900;
+        margin: 5px 0;
+        font-size: 2.5rem;
+        text-shadow: 0 2px 8px rgba(0,0,0,0.7);
     }
     
     .main-title p {
         color: #ddd6fe !important;
-        margin-top: 10px;
+        margin-top: 8px;
         font-size: 1.1rem;
     }
 
     /* عناوين ومسميات الحقول */
     label {
-        color: #c4b5fd !important;
-        font-weight: 600 !important;
+        color: #a78bfa !important;
+        font-weight: 700 !important;
         font-size: 1.1rem !important;
     }
 
     /* مربع إدخال النص */
     .stTextArea textarea {
-        background-color: #181024 !important;
+        background-color: #140d21 !important;
         color: #ffffff !important;
-        border: 1.5px solid #5b21b6 !important;
-        border-radius: 12px !important;
+        border: 2px solid #5b21b6 !important;
+        border-radius: 14px !important;
         font-size: 1.05rem !important;
         line-height: 1.6 !important;
     }
     .stTextArea textarea:focus {
-        border-color: #a855f7 !important;
-        box-shadow: 0 0 12px rgba(168, 85, 247, 0.4) !important;
+        border-color: #c084fc !important;
+        box-shadow: 0 0 15px rgba(192, 132, 252, 0.4) !important;
     }
 
     /* زر الفحص */
     .stButton>button {
         width: 100%;
-        background: linear-gradient(90deg, #7c3aed 0%, #6d28d9 100%) !important;
+        background: linear-gradient(90deg, #7c3aed 0%, #5b21b6 100%) !important;
         color: #ffffff !important;
-        font-weight: 700 !important;
-        font-size: 1.2rem !important;
-        padding: 14px 24px !important;
-        border-radius: 12px !important;
-        border: 1px solid #a78bfa !important;
+        font-weight: 800 !important;
+        font-size: 1.25rem !important;
+        padding: 16px 24px !important;
+        border-radius: 14px !important;
+        border: 1px solid #c084fc !important;
         transition: all 0.3s ease !important;
-        box-shadow: 0 4px 20px 0 rgba(124, 58, 237, 0.4) !important;
+        box-shadow: 0 4px 20px 0 rgba(124, 58, 237, 0.5) !important;
     }
     .stButton>button:hover {
         transform: translateY(-2px);
-        box-shadow: 0 6px 25px 0 rgba(168, 85, 247, 0.6) !important;
-        background: linear-gradient(90deg, #8b5cf6 0%, #7c3aed 100%) !important;
+        box-shadow: 0 6px 25px 0 rgba(192, 132, 252, 0.7) !important;
+        background: linear-gradient(90deg, #9333ea 0%, #7c3aed 100%) !important;
     }
 
     /* شاشة تسجيل الدخول */
     .login-box {
-        background-color: #181024;
+        background-color: #140d21;
         padding: 40px;
-        border-radius: 18px;
-        border: 1px solid #5b21b6;
+        border-radius: 20px;
+        border: 2px solid #7c3aed;
         max-width: 450px;
         margin: 50px auto;
-        box-shadow: 0 20px 30px -5px rgba(0, 0, 0, 0.8);
+        text-align: center;
+        box-shadow: 0 20px 40px rgba(0, 0, 0, 0.9);
     }
 
-    /* تنسيق مربع النتيجة والرسائل */
-    .stAlert {
-        background-color: #1e1333 !important;
-        border: 1px solid #7c3aed !important;
-        color: #f3f0ff !important;
-        border-radius: 12px !important;
+    /* الملاحظات والشعار السفلي */
+    .footer-brand {
+        text-align: center;
+        margin-top: 40px;
+        color: #6b7280;
+        font-size: 0.9rem;
+        font-weight: 600;
     }
 </style>
 """, unsafe_allow_html=True)
@@ -110,60 +127,71 @@ if "authenticated" not in st.session_state:
     st.session_state["authenticated"] = False
 
 if not st.session_state["authenticated"]:
-    st.markdown('<div class="login-box">', unsafe_allow_html=True)
-    st.title("🔒 تسجيل الدخول")
-    st.write("نظام فحص وتقييم القصص الخاص بإدارة ريسبكت")
-    input_pwd = st.text_input("أدخل كلمة المرور:", type="password")
+    st.markdown("""
+    <div class="login-box">
+        <div class="brand-badge">RESPECT ROLEPLAY</div>
+        <h2 style="color: #fff; margin-bottom: 10px;">👑 بوابة الإدارة</h2>
+        <p style="color: #a78bfa; margin-bottom: 25px;">نظام الفحص الذكي والتقييم المتقدم للقصص</p>
+    </div>
+    """, unsafe_allow_html=True)
+    
+    input_pwd = st.text_input("🔑 أدخل كلمة المرور:", type="password")
     if st.button("تسجيل الدخول"):
         if input_pwd == PASSWORD_SECRET:
             st.session_state["authenticated"] = True
             st.rerun()
         else:
             st.error("كلمة المرور غير صحيحة!")
-    st.markdown('</div>', unsafe_allow_html=True)
     st.stop()
 
 # --- جلب API Key تلقائياً من Secrets ---
 api_key = st.secrets.get("GEMINI_API_KEY", "")
 
-# --- الهيدر والعنوان الرئيسي ---
+# --- الهيدر وشعارات ريسبكت ---
 st.markdown("""
 <div class="main-title">
-    <h1>👾 نظام فحص وتقييم القصص (Respect RP)</h1>
-    <p>أداة ذكية مخصصة لتقييم قصص السيرفر وتدقيق الشروط وفحص الذكاء الاصطناعي</p>
+    <div class="brand-badge">👑 RESPECT RP OFFICIAL TOOL</div>
+    <h1>✨ نظام فحص وتقييم القصص</h1>
+    <p>تدقيق احترافي للشروط، كشف دقيق للذكاء الاصطناعي، وتقييم إمكانية تطبيق الرول بلاي</p>
 </div>
 """, unsafe_allow_html=True)
 
 # --- منطقة إدخال النص ---
-story = st.text_area("📝 ألصق القصة المراد فحصها هنا:", height=250, placeholder="ضع نص القصة هنا...")
+story = st.text_area("📝 ألصق القصة المراد فحصها هنا:", height=260, placeholder="ضع نص القصة هنا للتحليل والشروط...")
 
-system_prompt = """قم بمراجعة القصة وتوفير التقييم بالتنسيق المحدد أسفله بشكل مختصر ومباشر. أنت مدقق مخصص لقصص سيرفر "ريسبكت (Respect RP)":
+# Prompt محسن بالكامل لزيادة دقة الـ AI وفحص صلاحية الرول بلاي
+system_prompt = """أنت المدقق الرسمي المخصص لقصص سيرفر "ريسبكت RP" (Respect Roleplay). قم بتحليل القصة بدقة عالية جداً وتقديم النتيجة بالشكل المباشر والمختصر الموضح أسفله:
 
-1. **كشف الذكاء الاصطناعي (AI Detection):**
-   - الاحتمالية: (منخفض جداً / متوسط / عالي جداً).
-   - السبب: (سطر واحد فقط اختصاراً).
+1. 🔍 **كشف الذكاء الاصطناعي (AI Detector - دقة عالية):**
+   - حلل القصة بعناية (افحص التناغم اللغوي، التكرار السطحي، الهيكلة التوليدية المعتادة، والمفردات الرسمية الفائقة).
+   - الاحتمالية: (منخفض جداً "بشري" / متوسط / عالي جداً "مكتوبة بـ AI").
+   - السبب: (سطر واحد فقط بذكر الأدلة مثل: مفردات توليدية، أسلوب بشري عاطفي، أو تراكيب جاهزة).
 
-2. **النتيجة النهائية:**
+2. 🎮 **ملائمة الرول بلاي (Roleplay Viability):**
+   - هل سيناريو القصة وأحداث الشخصية قابلة للتطبيق والتمثيل الفعلي داخل الجيم بلاي بالسيرفر بدون الاعتماد على اللوقات (Logs) أو أحداث وهمية لا تدعمها المودات؟
+   - النتيجة: (مقبول رول بلاي / غير قابل للتمثيل - يعتمد على اللوقات أو سيناريو غير واقعي).
+
+3. 📌 **النتيجة النهائية:**
    - (مقبولة) أو (مرفوضة).
 
-3. **تفصيل شروط سيرفر ريسبكت:**
+4. 📋 **تفصيل شروط سيرفر ريسبكت:**
    - [مستوفى / غير مستوفى] : (الاسم، سنة الميلاد، والمنشأ - يكتفى بذكر اسم واحد فقط)
    - [مستوفى / غير مستوفى] : (الواقعية والتسلسل العمري والأحداث)
    - [مستوفى / غير مستوفى] : (حدث محوري/مؤلم في الطفولة أثر على الشخصية)
    - [مستوفى / غير مستوفى] : (الاهتمامات، الطموحات، السلبيات والإيجابيات)
    - [مستوفى / غير مستوفى] : (خلو القصة من أحداث داخل السيرفر)
 
-4. **ملخص الرفض والملاحظات الصوتية (مختصر جداً):**
-   - اكتب الأسباب بأسلوب نقاط مختصر ومباشر جداً ليتم قراءتها للشخص صوتياً في الروم (بدون مقدمات ولا رسائل رسمية طويلة).
+5. 🎙️ **ملخص الرفض والملاحظات الصوتية (مختصر جداً):**
+   - اكتب أسباب الرفض بأسلوب نقاط مختصر ومباشر جداً ليتم قراءتها للشخص صوتياً في الروم (بدون مقدمات).
 """
 
-if st.button("🔮 فحص القصة الآن"):
+if st.button("👑 فحص القصة والتقييم"):
     if not api_key:
         st.error("لم يتم العثور على مفتاح API في Secrets. يرجى إضافته من إعدادات التطبيق.")
     elif not story.strip():
         st.warning("الرجاء كتابة أو نسخ القصة أولاً.")
     else:
-        with st.spinner("جاري تحليل القصة وفحص الشروط..."):
+        with st.spinner("👑 جاري تدقيق الشروط وفحص الذكاء الاصطناعي والرول بلاي..."):
             try:
                 client = genai.Client(api_key=api_key)
                 response = client.models.generate_content(
@@ -172,7 +200,14 @@ if st.button("🔮 فحص القصة الآن"):
                 )
 
                 st.markdown("---")
-                st.subheader("📊 نتيجة الفحص والتقرير الإداري:")
+                st.markdown("### 📊 تقرير إدارة Respect RP:")
                 st.info(response.text)
             except Exception as e:
                 st.error(f"حدث خطأ أثناء الفحص: {e}")
+
+# الفوتر السفلي
+st.markdown("""
+<div class="footer-brand">
+    👑 Respect RP - Administration Management System
+</div>
+""", unsafe_allow_html=True)
