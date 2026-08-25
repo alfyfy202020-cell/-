@@ -57,8 +57,8 @@ if st.button("فحص القصة الآن"):
     else:
         try:
             genai.configure(api_key=api_key)
-            model = genai.GenerativeModel("gemini-2.5-flash")
-            response = model.generate_content(f"{system_prompt}\n\nالقصة المراد فحصها:\n{story}")
+model = genai.GenerativeModel("gemini-2.5-flash")
+response = model.generate_content(f"{system_prompt}\n\nالقصة المراد فحصها:\n{story}")
 
             st.markdown("---")
             st.subheader("نتيجة الفحص:")
