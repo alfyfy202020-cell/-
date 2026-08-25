@@ -170,8 +170,18 @@ if st.button("🔮 فحص القصة الآن"):
         with st.spinner("جاري تحليل القصة وفحص الشروط..."):
             try:
                 genai.configure(api_key=api_key)
-                # التجربة بـ gemini-1.5-flash-latest لمنع أخطاء التسمية
-                model = genai.GenerativeModel("gemini-1.5-flash-latest")
+                
+                # اختيار نموذج متاح تلقائياً لمنع أي أخطاء 404
+                target_model = "gemini-2.0-flash"
+                try:
+                    available_models = [m.name for m in genai.list_models() if 'generateContent' in m.supported_generation_methods]
+                    if available_models:
+                        # اختيار أول نموذج يدعم الكتابة
+                        target_model = available_models[0]
+                except Exception:
+                    pass
+
+                model = genai.GenerativeModel(target_model)
                 response = model.generate_content(f"{system_prompt}\n\nالقصة المراد فحصها:\n{story}")
 
                 st.markdown("---")
