@@ -1,6 +1,5 @@
 import streamlit as st
 from google import genai
-import os
 
 # ضبط إعدادات الصفحة
 st.set_page_config(
@@ -9,23 +8,29 @@ st.set_page_config(
     layout="wide"
 )
 
+# رابط الشعار المباشر لضمان الظهور دائماً
+LOGO_URL = "logo.png"
+
 # --- تنسيق وتصميم الواجهة وشعار Respect RP ---
 st.markdown("""
 <style>
     .stApp {
         background-color: #0d0914;
-        background-image: radial-gradient(circle at 50% 10%, rgba(109, 40, 217, 0.2) 0%, transparent 60%);
+        background-image: radial-gradient(circle at 50% 10%, rgba(109, 40, 217, 0.25) 0%, transparent 60%);
         color: #f3f0ff;
     }
     
-    .logo-container {
-        text-align: center;
+    .logo-header {
+        display: flex;
+        justify-content: center;
+        align-items: center;
         margin-bottom: 15px;
     }
     
-    .logo-container img {
-        max-width: 130px;
-        filter: drop-shadow(0 0 15px rgba(168, 85, 247, 0.6));
+    .logo-header img {
+        width: 130px;
+        height: auto;
+        filter: drop-shadow(0 0 15px rgba(168, 85, 247, 0.8));
     }
     
     .main-title {
@@ -129,14 +134,16 @@ if "authenticated" not in st.session_state:
     st.session_state["authenticated"] = False
 
 if not st.session_state["authenticated"]:
-    st.markdown('<div class="login-box">', unsafe_allow_html=True)
-    if os.path.exists("logo.png"):
-        st.image("logo.png", width=120)
-    st.markdown("""
+    st.markdown(f'''
+    <div class="login-box">
+        <div class="logo-header">
+            <img src="{LOGO_URL}" onerror="this.onerror=null; this.src='https://i.imgur.com/vHq0FZX.png';" />
+        </div>
         <div class="brand-badge">RESPECT ROLEPLAY</div>
         <h2 style="color: #fff; margin-bottom: 5px;">بوابة الإدارة</h2>
         <p style="color: #a78bfa; margin-bottom: 20px;">نظام الفحص والتدقيق الذكي للقصص</p>
-    """, unsafe_allow_html=True)
+    </div>
+    ''', unsafe_allow_html=True)
     
     input_pwd = st.text_input("🔑 أدخل كلمة المرور:", type="password")
     if st.button("تسجيل الدخول"):
@@ -145,27 +152,22 @@ if not st.session_state["authenticated"]:
             st.rerun()
         else:
             st.error("كلمة المرور غير صحيحة!")
-    st.markdown('</div>', unsafe_allow_html=True)
     st.stop()
 
 # --- جلب API Key تلقائياً من Secrets ---
 api_key = st.secrets.get("GEMINI_API_KEY", "")
 
-# --- عرض الشعار والعنوان ---
-if os.path.exists("logo.png"):
-    col1, col2, col3 = st.columns([1, 2, 1])
-    with col2:
-        st.markdown('<div class="logo-container">', unsafe_allow_html=True)
-        st.image("logo.png", width=130)
-        st.markdown('</div>', unsafe_allow_html=True)
-
-st.markdown("""
+# --- عرض الشعار والعنوان الرئيسية ---
+st.markdown(f'''
+<div class="logo-header">
+    <img src="{LOGO_URL}" onerror="this.onerror=null; this.src='https://i.imgur.com/vHq0FZX.png';" />
+</div>
 <div class="main-title">
     <div class="brand-badge">RESPECT RP OFFICIAL TOOL</div>
     <h1>نظام فحص وتدقيق القصص</h1>
     <p>فحص الكتابة البشرية، مطابقة الشروط، وتقييم سيناريو الرول بلاي</p>
 </div>
-""", unsafe_allow_html=True)
+''', unsafe_allow_html=True)
 
 # --- منطقة إدخال النص ---
 story = st.text_area("📝 ألصق القصة المراد فحصها هنا:", height=250, placeholder="ضع نص القصة هنا للتحليل...")
