@@ -157,8 +157,8 @@ system_prompt = """قم بمراجعة القصة وتوفير التقييم ب
 4. **أسباب الرفض والملاحظات (إن وجدت):**
    - وضح النقاط المفقودة والتوجيهات للتعديل بأسلوب مباشر ومختصر.
 
-5. **رسالة الرفض الموجهة للشخص (رسالة إدارية مرتبة وجاهزة للنسخ):**
-   - قم بكتابة رسالة ديسكورد محترمة ومرتبة بالنيابة عن إدارة "ريسبكت RP" موجهة للشخص صاحب القصة، تشرح له الرفض بلباقة وتوضح له الأسباب بالتفصيل مع توجيهه لكيفية التعديل ليتمكن من إعادة التقديم. (إذا كانت القصة مقبولة، اكتب رسالة قبول وترحيب به في السيرفر).
+5. **رسالة الرفض/القبول الموجهة للشخص (رسالة إدارية مرتبة وجاهزة للنسخ):**
+   - قم بكتابة رسالة ديسكورد محترمة ومرتبة بالنيابة عن إدارة "ريسبكت RP" موجهة للشخص صاحب القصة، تشرح له النتيجة بلباقة وتوضح له الأسباب بالتفصيل مع توجيهه لكيفية التعديل ليتمكن من إعادة التقديم في حال الرفض.
 """
 
 if st.button("🔮 فحص القصة الآن"):
@@ -171,17 +171,18 @@ if st.button("🔮 فحص القصة الآن"):
             try:
                 genai.configure(api_key=api_key)
                 
-                # اختيار نموذج متاح تلقائياً لمنع أي أخطاء 404
-                target_model = "gemini-2.0-flash"
+                # جلب النموذج المناسب والمدعوم تلقائياً لمنع خطأ 404
+                model_name = "gemini-3.6-flash"
                 try:
-                    available_models = [m.name for m in genai.list_models() if 'generateContent' in m.supported_generation_methods]
-                    if available_models:
-                        # اختيار أول نموذج يدعم الكتابة
-                        target_model = available_models[0]
+                    models = [m.name for m in genai.list_models() if 'generateContent' in m.supported_generation_methods]
+                    if models:
+                        # اختيار أول نموذج فلاش متوفر أو أول نموذج بالقائمة
+                        flash_models = [m for m in models if 'flash' in m]
+                        model_name = flash_models[0] if flash_models else models[0]
                 except Exception:
                     pass
 
-                model = genai.GenerativeModel(target_model)
+                model = genai.GenerativeModel(model_name)
                 response = model.generate_content(f"{system_prompt}\n\nالقصة المراد فحصها:\n{story}")
 
                 st.markdown("---")
